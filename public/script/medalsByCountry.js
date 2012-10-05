@@ -99,8 +99,6 @@ function updateGameEdition(edition, prevEdition, nextEdition){
 function updateGameEditionData(edition) {
   loading(false);
   
-  removeAllLinks();
-  
   //get the rows for the current edition
   editionsData = dataSource.where({
     rows: function(row){
@@ -117,9 +115,11 @@ function updateGameEditionData(edition) {
 
     computedCountriesData = new Array();
     
+    var i = 0;
    editionsData.each(function(row,rowIndex){
     //console.log("row: " + row);
     countryItem = row;
+    countryItem.idx = ++i;
     countryItem.position = function(f) {
               if (f === undefined) f = 1
                return {
@@ -127,12 +127,14 @@ function updateGameEditionData(edition) {
                     y: f*settings.MAIN_BALL_RADIO*Math.sin(angleFromIdx(this.idx))
                }
           };
+     //countryItem.value = row.Total;// Math.pow(parseFloat(row.Total)/126993.0, 0.17);
+     countryItem.value = Math.pow(parseFloat(row.Total)/12699.0, 0.17);
      countryItem.angle = function() {
                 return angleFromIdx(this.idx);
           };
     computedCountriesData.push(countryItem);
     
-    console.log("countryItem: " + countryItem)
+    //console.log("countryItem: " + countryItem)
   });
       
     window.onresize = function(event) {
@@ -142,10 +144,173 @@ function updateGameEditionData(edition) {
       document.getElementById('innerCircle').style.left = window.innerWidth/2;
       document.getElementById('innerCircle').style.top = window.innerHeight/2;
     }
+    
+    updateViz();
 
   loading(true);
 
 }; 
+
+//display the sunburst
+function updateViz(){
+      removeAllLinks();
+    
+    lines.selectAll("line.country")
+    .data(computedCountriesData, function(d) {
+      return d.CountryCode;
+    })
+    .enter()
+    .append("svg:line")
+      .attr("class", "country")
+      .attr('id', function(d) {
+          return d.idx;
+      })
+      .attr('x1', function(d) {
+          return settings.MAIN_BALL_RADIO*Math.cos(angleFromIdx(d.idx));
+      })
+      .attr('y1', function(d) {
+          return settings.MAIN_BALL_RADIO*Math.sin(angleFromIdx(d.idx));
+      })
+      .attr('x2', function(d) {
+          var v = d.value;
+          //console.log("x2 value="+v);
+          return (settings.MAIN_BALL_RADIO + v*settings.MAX_LINE_SIZE)*Math.cos(angleFromIdx(d.idx));
+      })
+      .attr('y2', function(d) {
+          var v = d.value;
+          //console.log("y2 value="+v);
+          return (settings.MAIN_BALL_RADIO + v*settings.MAX_LINE_SIZE)*Math.sin(angleFromIdx(d.idx));
+      })
+      .attr('stroke', function(d) {
+        return colorByCountry(d.CountryCode); 
+      })
+      .attr('stroke-width', 5)
+      .on("mouseover", function(d, e) {
+        tooltip.style.display = 'block';
+        tooltip.style.position = 'absolute';
+        tooltip.style['z-index'] = '20000';
+        tooltip.innerHTML = d.CountryName;
+        tooltip.style.left = d3.event.clientX+10+'px';
+        tooltip.style.top = d3.event.clientY+10+'px';
+        fade(.2, 50, d);
+        this.style['cursor'] = 'pointer';
+      })
+      .on("mouseout", function(d) {
+        tooltip.style.display = 'none';
+        fade(1, 500, d);
+      });
+      /*
+      .on('click', function(sourceCountry) {
+          console.log("click");
+          loading(false);
+          restoreCountries();
+          d3.json(HOST + COUNTRY_LINKS_URL.format(sourceCountry.iso, year), function(links) { 
+            document.getElementById('big_year').innerHTML = sourceCountry.name
+            links = links.rows;
+            loading(true);
+            var max_sum = d3.max(links, function(a) { return a.sum});
+            var linksByIso = {};
+            for(var i = 0; i < links.length; ++i) {
+              linksByIso[links[i].from_iso] = links[i].sum;
+            }
+    
+            lines.selectAll('line.country')
+              .filter(function(d, i) {
+                if(d.iso == sourceCountry.iso) return false;
+                for(var l = 0; l < links.length; ++l) {
+                  if(d.iso == links[l].from_iso) {
+                    return true;
+                  }
+                }
+                return false;
+              })
+              .transition()
+                .attr('x2', function(d) {
+                    var f = 1.0 - 0.2*(Math.sqrt(linksByIso[d.iso]/max_sum));
+                    return f*(settings.MAIN_BALL_RADIO)*Math.cos(angleFromIdx(d.idx));
+                })
+                .attr('y2', function(d) {
+                    var f = 1.0 - 0.2*(Math.sqrt(linksByIso[d.iso]/max_sum));
+                    return f*(settings.MAIN_BALL_RADIO)*Math.sin(angleFromIdx(d.idx));
+                })
+    
+            lines.selectAll('path.link').remove()
+            lines.selectAll('path.link')
+              .data(links.filter(function(d) {
+                return allCountriesByISO[d.from_iso] !== undefined;
+              }))
+              .enter()
+                .append('path')
+                .attr('class', 'link')
+                .attr("d", function(d) {
+                  var op = sourceCountry.position()
+                  var f = 1.0 - 0.2*Math.sqrt(d.sum/max_sum);
+                  var tp = allCountriesByISO[d.from_iso].position(f*0.98);
+                  var s = "M " + op.x + "," + op.y;
+                  var e = "C 0,0 0,0 " + tp.x +"," + tp.y;
+                  return s + " " + e; //'M 0,420 C 110,220 220,145 0,0'
+                })
+                .attr('fill', 'none')
+                .attr('stroke', function(d) {
+                  var t = allCountriesByISO[d.from_iso];
+                  return colorByRegion(t.region); 
+                })
+                .attr('stroke-width', function(d) {
+                  return 0.2 + 1.4*d.sum/max_sum;
+                })
+                .attr('opacity', function(d) {
+                  return 0.3 + 0.5*d.sum/max_sum;
+                });
+          });
+    
+    
+      });*/
+    
+      var restoreCountries = function() {
+        returning_back = true;
+        lines.selectAll("line.country")
+          .data(computedCountriesData)
+          .transition()
+            .attr('x2', function(d) {
+                var v = d.value;
+                //console.log("x2 value="+v);
+                return (settings.MAIN_BALL_RADIO + v*settings.MAX_LINE_SIZE)*Math.cos(angleFromIdx(d.idx));
+            })
+            .attr('y2', function(d) {
+                var v = d.value;
+                //console.log("y2 value="+v);
+                return (settings.MAIN_BALL_RADIO + v*settings.MAX_LINE_SIZE)*Math.sin(angleFromIdx(d.idx));
+            })
+            .each("end", function() {
+              returning_back = false;
+            })
+      }
+      restoreCountries();
+
+}    
+
+function fade(opacity, ttt, t) {
+   A = lines.selectAll("line.country")
+       .filter(function(d) {
+         return d.CountryCode != t.CountryCode;
+       })
+       .transition()
+   if(returning_back) {
+     A = A.delay(1000)
+   }
+   A.transition()
+     .duration(ttt)
+     .style("opacity", opacity);
+}
+
+function angleFromIdx(i) {
+  return -Math.PI/2 + (i-1)*2*Math.PI/computedCountriesData.length;
+}
+
+
+function colorByCountry(r) {
+    return '#FFFF66';
+}
 
 function removeAllLinks() {
     if (lines){
@@ -222,6 +387,8 @@ function isDataLoading(){
 
 // viz lifecycle
 function startViz(){
+    tooltip = document.getElementById('tooltip');
+
     loadData();
 }
 
