@@ -15,10 +15,21 @@ var year = 1896;
 var minYear = 1896;
 var maxYear = 2012;
 
+// -- settings
+var settings = {
+  MAIN_BALL_RADIO: 210,
+  MAX_LINE_SIZE: 100,
+};
+
+
 //Editions related data structures
 var editions = new Array();
 var currentGameEdition = null;
 var currentGameIndex = -1;
+
+// Current edition data structures
+var editionsData = null; //miso dataset
+var computedCountriesData = new Array();
 
 var dataSource = new Miso.Dataset({
   url : "../data/vwMedalsByCountry.csv",
@@ -37,24 +48,16 @@ var dataSource = new Miso.Dataset({
   ]
 });
 
-loadData();
-
 svg = d3.select("body").append("svg:svg")
       .attr("width", w)
       .attr("height", h)
       .attr("id", 'svg');
 
 document.getElementById('prevBtn').onclick = function() {
-  //edition--;
-  //show_year(year);
-  //updateGameEdition(edition);
     setGamesEditionIndex(currentGameIndex-1);
 }
 
 document.getElementById('nextBtn').onclick = function() {
-  //edition++ ;
-  //show_year(year);
-  //updateGameEdition(edition);
     setGamesEditionIndex(currentGameIndex+1);
 }
 
@@ -92,43 +95,56 @@ function updateGameEdition(edition, prevEdition, nextEdition){
   d3.selectAll('#hostCity').text(edition.hostCity);
 }
 
-
+// build the sunburst visualization
 function updateGameEditionData(edition) {
   loading(false);
   
   removeAllLinks();
   
-  var editionsData = dataSource.where({
+  //get the rows for the current edition
+  editionsData = dataSource.where({
     rows: function(row){
         return (row.GamesId == edition.gamesId);
     }
   });
-  console.log(editionsData.length, editionsData.toJSON());
- 
-  loading(true);
+  
+    svg.selectAll("g").remove();
+    lines = svg.append('svg:g')
+      .attr("transform", "translate(" + w2 + "," +  h2 +" )")
+
+    svg.style['position'] = 'absolute';
+    svg.style['z-index'] = 1000;
+
+    computedCountriesData = new Array();
     
-  /*
-  var sql = HOST + THE_ANDREW_SQL.format(year);
-
-  d3.json(sql , function(data) {
-      loading(true);
-      for(var i = 0; i < data.rows.length; ++i) {
-        country = data.rows[i]
-        countryData[i] = {
-          idx: i,
-          iso: country.iso,
-          value: Math.pow(parseFloat(country.imports)/126993.0, 0.17),
-          links: [2, 33],
-          name: "country " + i,
-
-        }
-        countryDataByIso[country.iso] = countryData[i];
-      }
-
-      start(year);
+   editionsData.each(function(row,rowIndex){
+    //console.log("row: " + row);
+    countryItem = row;
+    countryItem.position = function(f) {
+              if (f === undefined) f = 1
+               return {
+                    x: f*settings.MAIN_BALL_RADIO*Math.cos(angleFromIdx(this.idx)),
+                    y: f*settings.MAIN_BALL_RADIO*Math.sin(angleFromIdx(this.idx))
+               }
+          };
+     countryItem.angle = function() {
+                return angleFromIdx(this.idx);
+          };
+    computedCountriesData.push(countryItem);
     
+    console.log("countryItem: " + countryItem)
   });
-  */
+      
+    window.onresize = function(event) {
+      svg.attr("width", window.innerWidth);
+      svg.attr("height", window.innerHeight);
+      lines.attr("transform", "translate(" + window.innerWidth/2 + "," +  window.innerHeight/2 +" )");
+      document.getElementById('innerCircle').style.left = window.innerWidth/2;
+      document.getElementById('innerCircle').style.top = window.innerHeight/2;
+    }
+
+  loading(true);
+
 }; 
 
 function removeAllLinks() {
@@ -137,7 +153,7 @@ function removeAllLinks() {
     }
 }
 
-
+// display loading progress animation
 function loading(o) {
   if(o) {
     clearInterval(loading_timer);
@@ -196,16 +212,6 @@ function dataReady(){
     console.log("Total editions: " + editions.length);
     editions.reverse();
     setGamesEditionIndex(editions.length-1);
-
-    
-	/*    
-    dataSource.each(function(row){
-    	console.log(JSON.stringify(row));
-    });
-    */
-
-    //console.log("OK! There are " + dataSource.groupBy('GamesId',['HostCity']).length + " editions");
-    //console.log("There are " + dataSource.length + " rows");
 }
 
 function isDataLoading(){
@@ -213,3 +219,11 @@ function isDataLoading(){
 }
 // End Data Manipulation
 
+
+// viz lifecycle
+function startViz(){
+    loadData();
+}
+
+// entry point
+startViz();
