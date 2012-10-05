@@ -83,6 +83,7 @@ function updateGameEdition(edition, prevEdition, nextEdition){
   document.getElementById('prevBtn_a').innerHTML = (prevEdition!=null) ? prevEdition.year : '';
   document.getElementById('nextBtn_a').innerHTML = (nextEdition!=null) ? nextEdition.year : '';
   document.getElementById('big_year').innerHTML = edition.year;
+  document.getElementById('hostCity').innerHTML = edition.hostCity;
 }
 
 function show_year(year) {
