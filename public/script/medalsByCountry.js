@@ -18,7 +18,7 @@ var maxYear = 2012;
 // -- settings
 var settings = {
   MAIN_BALL_RADIO: 210,
-  MAX_LINE_SIZE: 100,
+  MAX_LINE_SIZE: 200,
 };
 
 
@@ -112,6 +112,10 @@ function updateGameEditionData(edition) {
 
     svg.style['position'] = 'absolute';
     svg.style['z-index'] = 1000;
+    
+    document.getElementById('svg').style['position'] = 'absolute';
+    document.getElementById('svg').style['z-index'] = 1000;
+
 
     computedCountriesData = new Array();
     
@@ -155,6 +159,8 @@ function updateGameEditionData(edition) {
 function updateViz(){
       removeAllLinks();
     
+    var strokeWidth = 450 / computedCountriesData.length;
+    
     lines.selectAll("line.country")
     .data(computedCountriesData, function(d) {
       return d.CountryCode;
@@ -184,7 +190,7 @@ function updateViz(){
       .attr('stroke', function(d) {
         return colorByCountry(d.CountryCode); 
       })
-      .attr('stroke-width', 5)
+      .attr('stroke-width', strokeWidth)
       .on("mouseover", function(d, e) {
         tooltip.style.display = 'block';
         tooltip.style.position = 'absolute';
