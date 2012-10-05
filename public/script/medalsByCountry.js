@@ -78,12 +78,14 @@ function setGamesEditionIndex(gameIndex){
 }
 
 function updateGameEdition(edition, prevEdition, nextEdition){
-  document.getElementById('prevBtn_a').style.display = (prevEdition!=null) ? 'inline' : 'none';
-  document.getElementById('nextBtn_a').style.display = (nextEdition!=null) ? 'inline' : 'none';
-  document.getElementById('prevBtn_a').innerHTML = (prevEdition!=null) ? prevEdition.year : '';
-  document.getElementById('nextBtn_a').innerHTML = (nextEdition!=null) ? nextEdition.year : '';
-  document.getElementById('big_year').innerHTML = edition.year;
-  document.getElementById('hostCity').innerHTML = edition.hostCity;
+  d3.selectAll('#prevBtn_a').style("display",  (prevEdition!=null) ? 'inline' : 'none');
+  d3.selectAll('#nextBtn_a').style("display",  (nextEdition!=null) ? 'inline' : 'none');
+
+  d3.selectAll('#prevBtn_a').text((prevEdition!=null) ? prevEdition.year : '');
+  d3.selectAll('#nextBtn_a').text((nextEdition!=null) ? nextEdition.year : '');
+  
+  d3.selectAll('#big_year').text(edition.year);
+  d3.selectAll('#hostCity').text(edition.hostCity);
 }
 
 function show_year(year) {
