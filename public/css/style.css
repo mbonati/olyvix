@@ -115,3 +115,8 @@ div#citation a, div#credits a{
 	font-size: 13px;
 	font-family: Arial, Sans-serif;
 }
+
+#hostCity {
+    margin-top: 16px !important;
+}
+
