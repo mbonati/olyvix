@@ -1,0 +1,117 @@
+body{ background: #333333 url('../img/bkg.jpg') no-repeat center center fixed; -webkit-background-size: cover; -moz-background-size: cover; -o-background-size: cover; background-size: cover; }
+
+
+div#titleContainer{ position: absolute; top: 60px; left: 50px; width: 350px; z-index: 1002; }
+
+h1{ font-family: 'Miso Regular'; font-size: 45px; color: #FFF; margin: 0 0 20px 11px;}
+h2{ font-family: 'Miso Light',Helvetica, Arial, Sans-serif; font-size: 20px; font-weight: normal; color: #707070; width: 300px; line-height:20px; margin: 0 0 0 11px;}
+
+div#titleContainer ul{ margin: 20px 0 0 0;}
+
+div#titleContainer ul li{
+	font-family: 'Miso Regular', Helvetica, Arial, Sans-serif;
+	font-size: 19px;
+	margin: 7px 0 0 0;
+}
+
+div#titleContainer ul li a{
+	color: #707070;
+	text-decoration: none;
+	padding: 0 0 0 11px;
+}
+
+div#titleContainer ul li a:hover{ color: #FFF; }
+
+div#titleContainer ul li a.selected{
+	color:#FFF;
+	background: url('../img/menu_bullet.png') 1px 6px no-repeat;
+}
+
+div#innerCircle{
+	position: absolute;
+	width: 402px;
+	height: 402px;
+	display: block;
+	top: 50%;
+	left: 50%;
+	margin: -201px 0 0 -201px;
+	background: url('../img/inner_circle.png') no-repeat right top;
+	text-align: center;
+}
+
+div#innerCircle p{
+	margin: 174px 0 0 0;
+	font-family: 'MentoneSemiBold'; font-size: 19px; color: #FFF;
+}
+
+div#innerCircle ul{ margin: 14px 0 0 0;}
+div#innerCircle ul li{
+	display: inline;
+	margin: 0 10px 0 0;
+	font-family: Arial, Sans-serif;
+	font-size: 12px;
+	color: #999;
+	padding: 0 0 0 10px;
+}
+div#innerCircle ul li.last{ margin: 0;}
+
+div#innerCircle ul li.north{ background: url('../img/legend_blue.png') 0 5px no-repeat;}
+div#innerCircle ul li.tropical{ background: url('../img/legend_green.png') 0 5px no-repeat;}
+div#innerCircle ul li.south{ background: url('../img/legend_yellow.png') 0 5px no-repeat;}
+
+div#prevBtn{ position: absolute; top: 50%; left: 60px; z-index: 1001;}
+div#nextBtn{ position: absolute; top: 50%; right: 60px; z-index: 1001;}
+
+div#prevBtn a{
+	font-family: 'Miso Bold'; font-size: 13px; color: #4e4e4e;
+	padding: 26px 0 25px 76px;
+	background: url('../img/prev_arrow.png') no-repeat top left;
+	text-decoration: none;
+}
+
+div#prevBtn a:hover{
+	font-family: 'Miso Bold'; font-size: 13px; color: #898989;
+	background: url('../img/prev_arrow.png') no-repeat bottom left;
+}
+
+div#nextBtn a{
+	font-family: 'Miso Bold'; font-size: 13px; color: #4e4e4e;
+	padding: 26px 76px 25px 0px;
+	background: url('../img/next_arrow.png') no-repeat right top;
+	text-decoration: none;
+}
+
+div#nextBtn a:hover{
+	font-family: 'Miso Bold'; font-size: 13px; color: #898989;
+	background: url('../img/next_arrow.png')  no-repeat right bottom;
+}
+
+div#citation{
+	position: absolute;
+	right: 10px;
+	bottom: 10px;
+	color: #333333;
+	font-family: Arial, Sans-serif;
+	font-size: 11px;
+	z-index: 2001;
+}
+
+div#credits{
+	position: absolute;
+	left: 10px;
+	bottom: 10px;
+	color: #333333;
+	font-family: Arial, Sans-serif;
+	font-size: 11px;
+	z-index: 2000;
+}
+
+div#citation a, div#credits a{
+	color: #333333;	
+}
+
+#tooltip {
+	color: #FFF;
+	font-size: 13px;
+	font-family: Arial, Sans-serif;
+}
