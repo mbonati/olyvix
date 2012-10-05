@@ -58,6 +58,7 @@ document.getElementById('nextBtn').onclick = function() {
     setGamesEditionIndex(currentGameIndex+1);
 }
 
+// Select the current game by ordinal index (zero-based)
 function setGamesEditionIndex(gameIndex){
 
     //check editions bounds
@@ -75,8 +76,11 @@ function setGamesEditionIndex(gameIndex){
   var prevGame = (currentGameIndex>0?editions[gameIndex-1]:null);
   
   updateGameEdition(currentGameEdition,prevGame,nextGame);
+  
+  updateGameEditionData(currentGameEdition);
 }
 
+// update game edition display
 function updateGameEdition(edition, prevEdition, nextEdition){
   d3.selectAll('#prevBtn_a').style("display",  (prevEdition!=null) ? 'inline' : 'none');
   d3.selectAll('#nextBtn_a').style("display",  (nextEdition!=null) ? 'inline' : 'none');
@@ -88,8 +92,11 @@ function updateGameEdition(edition, prevEdition, nextEdition){
   d3.selectAll('#hostCity').text(edition.hostCity);
 }
 
-function show_year(year) {
+
+function updateGameEditionData(edition) {
   loading(false);
+  
+  /*
   removeAllLinks();
   var sql = HOST + THE_ANDREW_SQL.format(year);
 
@@ -111,6 +118,7 @@ function show_year(year) {
       start(year);
     
   });
+  */
 }; 
 
 function loading(o) {
