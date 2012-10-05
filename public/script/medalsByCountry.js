@@ -96,8 +96,18 @@ function updateGameEdition(edition, prevEdition, nextEdition){
 function updateGameEditionData(edition) {
   loading(false);
   
-  /*
   removeAllLinks();
+  
+  var editionsData = dataSource.where({
+    rows: function(row){
+        return (row.GamesId == edition.gamesId);
+    }
+  });
+  console.log(editionsData.length, editionsData.toJSON());
+ 
+  loading(true);
+    
+  /*
   var sql = HOST + THE_ANDREW_SQL.format(year);
 
   d3.json(sql , function(data) {
@@ -120,6 +130,13 @@ function updateGameEditionData(edition) {
   });
   */
 }; 
+
+function removeAllLinks() {
+    if (lines){
+        lines.selectAll('path.link').remove();
+    }
+}
+
 
 function loading(o) {
   if(o) {
