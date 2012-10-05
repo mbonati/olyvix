@@ -1,23 +1,3 @@
-/*
-var ds = new Miso.Dataset({
-  data: [ 
-    { one : 1, two : 4, three : 7 },
-    { one : 2, two : 5, three : 8 },
-    { one : 6, two : 8, three : 55 },
-    { one : 6, two : 8, three : 60 },
-    { one : 6, two : 9, three : 66 }
-  ]
-});
-
-ds.fetch({ 
-  success: function() {
-    this.groupBy('one', ['two']).each(function(row){
-    	console.log(JSON.stringify(row));
-    });
-  }
-});
-*/
-
 
 var loading_timer = null;
 var dataLoading = false;
@@ -35,9 +15,10 @@ var year = 1896;
 var minYear = 1896;
 var maxYear = 2012;
 
+//Editions related data structures
 var editions = new Array();
-var edition = 1;
-var lastEdition = 27;
+var currentGameEdition = null;
+var currentGameIndex = -1;
 
 var dataSource = new Miso.Dataset({
   url : "../data/vwMedalsByCountry.csv",
@@ -56,7 +37,6 @@ var dataSource = new Miso.Dataset({
   ]
 });
 
-updateGameEdition(edition);
 loadData();
 
 svg = d3.select("body").append("svg:svg")
@@ -65,23 +45,44 @@ svg = d3.select("body").append("svg:svg")
       .attr("id", 'svg');
 
 document.getElementById('prevBtn').onclick = function() {
-  edition--;
+  //edition--;
   //show_year(year);
-  updateGameEdition(edition);
+  //updateGameEdition(edition);
+    setGamesEditionIndex(currentGameIndex-1);
 }
 
 document.getElementById('nextBtn').onclick = function() {
-  edition++ ;
+  //edition++ ;
   //show_year(year);
-  updateGameEdition(edition);
+  //updateGameEdition(edition);
+    setGamesEditionIndex(currentGameIndex+1);
 }
 
-function updateGameEdition(y){
-  document.getElementById('prevBtn_a').style.display = (y>1) ? 'inline' : 'none';
-  document.getElementById('nextBtn_a').style.display = (y<lastEdition) ? 'inline' : 'none';
-  document.getElementById('prevBtn_a').innerHTML = (y-1).toString();
-  document.getElementById('nextBtn_a').innerHTML = (y+1).toString();
-  document.getElementById('big_year').innerHTML = y.toString();
+function setGamesEditionIndex(gameIndex){
+
+    //check editions bounds
+    if (gameIndex<0){ 
+        gameIndex = 0;
+    }
+    if (gameIndex>=(editions.length)){
+        gameIndex = editions.length - 1;
+    }
+  
+  currentGameIndex = gameIndex;
+  currentGameEdition = editions[gameIndex];
+  
+  var nextGame = (currentGameIndex<(editions.length-1)?editions[gameIndex+1]:null);
+  var prevGame = (currentGameIndex>0?editions[gameIndex-1]:null);
+  
+  updateGameEdition(currentGameEdition,prevGame,nextGame);
+}
+
+function updateGameEdition(edition, prevEdition, nextEdition){
+  document.getElementById('prevBtn_a').style.display = (prevEdition!=null) ? 'inline' : 'none';
+  document.getElementById('nextBtn_a').style.display = (nextEdition!=null) ? 'inline' : 'none';
+  document.getElementById('prevBtn_a').innerHTML = (prevEdition!=null) ? prevEdition.year : '';
+  document.getElementById('nextBtn_a').innerHTML = (nextEdition!=null) ? nextEdition.year : '';
+  document.getElementById('big_year').innerHTML = edition.year;
 }
 
 function show_year(year) {
@@ -165,7 +166,9 @@ function dataReady(){
                 editions.push(editionItem);
             });
     console.log("Total editions: " + editions.length);
-    
+    editions.reverse();
+    setGamesEditionIndex(editions.length-1);
+
     
 	/*    
     dataSource.each(function(row){
