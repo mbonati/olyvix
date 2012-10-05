@@ -1,9 +1,11 @@
-
+/*
 var ds = new Miso.Dataset({
   data: [ 
     { one : 1, two : 4, three : 7 },
     { one : 2, two : 5, three : 8 },
-    { one : 6, two : 8, three : 55 }
+    { one : 6, two : 8, three : 55 },
+    { one : 6, two : 8, three : 60 },
+    { one : 6, two : 9, three : 66 }
   ]
 });
 
@@ -14,7 +16,7 @@ ds.fetch({
     });
   }
 });
-
+*/
 
 
 var loading_timer = null;
@@ -33,6 +35,7 @@ var year = 1896;
 var minYear = 1896;
 var maxYear = 2012;
 
+var editions = new Array();
 var edition = 1;
 var lastEdition = 27;
 
@@ -133,6 +136,8 @@ function loading(o) {
 
 
 // Data Manipulation
+
+//fetch data from csv file
 function loadData(){
 	dataLoading = true;
 	loading(false); 
@@ -143,22 +148,33 @@ function loadData(){
 	});
 }
 
+//called when load data has been completed
 function dataReady(){
 	loading(true); 
 	dataLoading = false;
-	
-    dataSource.groupBy("Year",["HostCity","GamesId"]).each(function(row){
-    	console.log(JSON.stringify(row));
-    });
-	
+    
+    //build editions data array
+    //group the data for retrieve the editions
+    editions = new Array();
+    dataSource.groupBy("Year",["HostCity","GamesId"],{
+            method:function(arr){
+                return arr[0];
+            }
+        }).each(function(row){
+                var editionItem = { gamesId : row.GamesId, hostCity: row.HostCity, year : row.Year };
+                editions.push(editionItem);
+            });
+    console.log("Total editions: " + editions.length);
+    
+    
 	/*    
     dataSource.each(function(row){
     	console.log(JSON.stringify(row));
     });
     */
 
-    //alert("OK! There are " + dataSource.groupBy('GamesId',['HostCity']).length + " editions");
-    //alert("There are " + dataSource.length + " rows");
+    //console.log("OK! There are " + dataSource.groupBy('GamesId',['HostCity']).length + " editions");
+    //console.log("There are " + dataSource.length + " rows");
 }
 
 function isDataLoading(){
