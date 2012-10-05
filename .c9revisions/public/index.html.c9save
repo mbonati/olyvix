@@ -1,4 +1,0 @@
-{"ts":1349421713878,"silentsave":true,"restoring":false,"patch":[[]],"length":0}
-{"contributors":[],"silentsave":false,"ts":1349421729979,"patch":[[{"diffs":[[1,"<html>\n    <body>\n        Hello Marcus\n    </body>\n</html>"]],"start1":0,"start2":0,"length1":0,"length2":58}]],"length":58,"saved":false}
-{"contributors":[],"silentsave":false,"ts":1349422229525,"patch":[[{"diffs":[[1,"<html>\n    <body>\n        Hello Marcus\n    </body>\n</html>"]],"start1":0,"start2":0,"length1":0,"length2":58}]],"length":58,"saved":false}
-{"contributors":[],"silentsave":false,"ts":1349422244889,"patch":[[{"diffs":[[0,"rcus"],[-1,"\n    </body>\n</html><html>\n    <body>\n        Hello Marcus"],[1," 2"],[0,"\n   "]],"start1":34,"start2":34,"length1":66,"length2":10}]],"length":60,"saved":false}
