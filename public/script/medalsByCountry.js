@@ -178,20 +178,13 @@ function createViz(){
           return settings.MAIN_BALL_RADIO*Math.sin(angleFromIdx(d.idx));
       })
       .attr('x2', function(d) {
-          var c = computedCountriesData[d.countryCode];
-          var v = 0;
-          if (c) {
-            v = c.value;
-          }
-          //console.log("x2 value="+v);
+          //the first creation value is 0 (then invisible)
+          v = 0;
           return (settings.MAIN_BALL_RADIO + v*settings.MAX_LINE_SIZE)*Math.cos(angleFromIdx(d.idx));
       })
       .attr('y2', function(d) {
-          var c = computedCountriesData[d.countryCode];
-          var v = 0;
-          if (c) {
-            v = c.value;
-          }
+          //the first creation value is 0 (then invisible)
+          v = 0;
           //console.log("y2 value="+v);
           return (settings.MAIN_BALL_RADIO + v*settings.MAX_LINE_SIZE)*Math.sin(angleFromIdx(d.idx));
       })
