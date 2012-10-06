@@ -161,7 +161,7 @@ function updateGameEditionData(edition) {
 function updateViz(){
       removeAllLinks();
     
-    var strokeWidth = 450 / allCountries.length;
+    var strokeWidth = 700 / allCountries.length;
     
     lines.selectAll("line.country")
     .data(allCountries, function(d) {
@@ -316,7 +316,7 @@ function updateViz(){
 function fade(opacity, ttt, t) {
    A = lines.selectAll("line.country")
        .filter(function(d) {
-         return d.CountryCode != t.CountryCode;
+         return d.countryCode != t.countryCode;
        })
        .transition()
    if(returning_back) {
