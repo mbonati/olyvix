@@ -22,6 +22,7 @@ String.prototype.format = function(i, safe, arg) {
   return format;
 }();
 
+
 var loading_timer = null;
 var returning_back = false;
 var w = innerWidth,

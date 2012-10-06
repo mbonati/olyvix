@@ -21,6 +21,8 @@ var settings = {
   MAX_LINE_SIZE: 200,
 };
 
+//Countries related data structures
+var allCountries = new Array();
 
 //Editions related data structures
 var editions = new Array();
@@ -29,7 +31,7 @@ var currentGameIndex = -1;
 
 // Current edition data structures
 var editionsData = null; //miso dataset
-var computedCountriesData = new Array();
+var computedCountriesData = {}; //new Array();
 
 var dataSource = new Miso.Dataset({
   url : "../data/vwMedalsByCountry.csv",
@@ -117,7 +119,7 @@ function updateGameEditionData(edition) {
     document.getElementById('svg').style['z-index'] = 1000;
 
 
-    computedCountriesData = new Array();
+    computedCountriesData = {};//new Array();
     
     var i = 0;
    editionsData.each(function(row,rowIndex){
@@ -136,7 +138,7 @@ function updateGameEditionData(edition) {
      countryItem.angle = function() {
                 return angleFromIdx(this.idx);
           };
-    computedCountriesData.push(countryItem);
+    computedCountriesData[countryItem.CountryCode] = countryItem;
     
     //console.log("countryItem: " + countryItem)
   });
@@ -159,11 +161,11 @@ function updateGameEditionData(edition) {
 function updateViz(){
       removeAllLinks();
     
-    var strokeWidth = 450 / computedCountriesData.length;
+    var strokeWidth = 450 / allCountries.length;
     
     lines.selectAll("line.country")
-    .data(computedCountriesData, function(d) {
-      return d.CountryCode;
+    .data(allCountries, function(d) {
+      return d.countryCode;
     })
     .enter()
     .append("svg:line")
@@ -178,12 +180,20 @@ function updateViz(){
           return settings.MAIN_BALL_RADIO*Math.sin(angleFromIdx(d.idx));
       })
       .attr('x2', function(d) {
-          var v = d.value;
+          var c = computedCountriesData[d.countryCode];
+          var v = 0;
+          if (c) {
+            v = c.value;
+          }
           //console.log("x2 value="+v);
           return (settings.MAIN_BALL_RADIO + v*settings.MAX_LINE_SIZE)*Math.cos(angleFromIdx(d.idx));
       })
       .attr('y2', function(d) {
-          var v = d.value;
+          var c = computedCountriesData[d.countryCode];
+          var v = 0;
+          if (c) {
+            v = c.value;
+          }
           //console.log("y2 value="+v);
           return (settings.MAIN_BALL_RADIO + v*settings.MAX_LINE_SIZE)*Math.sin(angleFromIdx(d.idx));
       })
@@ -195,7 +205,7 @@ function updateViz(){
         tooltip.style.display = 'block';
         tooltip.style.position = 'absolute';
         tooltip.style['z-index'] = '20000';
-        tooltip.innerHTML = d.CountryName;
+        tooltip.innerHTML = d.countryName;
         tooltip.style.left = d3.event.clientX+10+'px';
         tooltip.style.top = d3.event.clientY+10+'px';
         fade(.2, 50, d);
@@ -275,15 +285,23 @@ function updateViz(){
       var restoreCountries = function() {
         returning_back = true;
         lines.selectAll("line.country")
-          .data(computedCountriesData)
+          .data(allCountries)
           .transition()
             .attr('x2', function(d) {
-                var v = d.value;
+                 var c = computedCountriesData[d.countryCode];
+                  var v = 0;
+                  if (c) {
+                    v = c.value;
+                  }
                 //console.log("x2 value="+v);
                 return (settings.MAIN_BALL_RADIO + v*settings.MAX_LINE_SIZE)*Math.cos(angleFromIdx(d.idx));
             })
             .attr('y2', function(d) {
-                var v = d.value;
+                  var c = computedCountriesData[d.countryCode];
+                  var v = 0;
+                  if (c) {
+                    v = c.value;
+                  }
                 //console.log("y2 value="+v);
                 return (settings.MAIN_BALL_RADIO + v*settings.MAX_LINE_SIZE)*Math.sin(angleFromIdx(d.idx));
             })
@@ -310,7 +328,7 @@ function fade(opacity, ttt, t) {
 }
 
 function angleFromIdx(i) {
-  return -Math.PI/2 + (i-1)*2*Math.PI/computedCountriesData.length;
+  return -Math.PI/2 + (i-1)*2*Math.PI/allCountries.length;
 }
 
 
@@ -382,6 +400,31 @@ function dataReady(){
             });
     console.log("Total editions: " + editions.length);
     editions.reverse();
+    
+    //build the All Countries data store
+    var rowIndex = 0;
+    allCountries = new Array();
+    dataSource.groupBy("CountryCode",["CountryName"],{
+        method:function(arr){
+            return arr[0];
+        }
+    }).each(function(row){
+        var countryItem = { countryCode : row.CountryCode, countryName: row.CountryName };
+        countryItem.idx = rowIndex++;
+        countryItem.angle = function() {
+                return angleFromIdx(this.idx);
+          };
+        countryItem.position = function(f) {
+              if (f === undefined) f = 1
+               return {
+                    x: f*settings.MAIN_BALL_RADIO*Math.cos(angleFromIdx(this.idx)),
+                    y: f*settings.MAIN_BALL_RADIO*Math.sin(angleFromIdx(this.idx))
+               }
+          };
+        allCountries.push(countryItem);
+    });
+    console.log("Total countries: " + allCountries.length);
+    
     setGamesEditionIndex(editions.length-1);
 }
 
