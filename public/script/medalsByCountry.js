@@ -11,9 +11,7 @@ var w = innerWidth,
 
 var svg, lines;
 var tooltip;
-var year = 1896;
-var minYear = 1896;
-var maxYear = 2012;
+var vizCreated = false;
 
 // -- settings
 var settings = {
@@ -107,17 +105,6 @@ function updateGameEditionData(edition) {
         return (row.GamesId == edition.gamesId);
     }
   });
-  
-    svg.selectAll("g").remove();
-    lines = svg.append('svg:g')
-      .attr("transform", "translate(" + w2 + "," +  h2 +" )")
-
-    svg.style['position'] = 'absolute';
-    svg.style['z-index'] = 1000;
-    
-    document.getElementById('svg').style['position'] = 'absolute';
-    document.getElementById('svg').style['z-index'] = 1000;
-
 
     computedCountriesData = {};//new Array();
     
@@ -153,14 +140,25 @@ function updateGameEditionData(edition) {
     
     updateViz();
 
-  loading(true);
+    loading(true);
 
 }; 
 
 //display the sunburst
-function updateViz(){
-      removeAllLinks();
+function createViz(){
     
+    removeAllLinks();
+    
+    svg.selectAll("g").remove();
+    lines = svg.append('svg:g')
+      .attr("transform", "translate(" + w2 + "," +  h2 +" )")
+
+    svg.style['position'] = 'absolute';
+    svg.style['z-index'] = 1000;
+    
+    document.getElementById('svg').style['position'] = 'absolute';
+    document.getElementById('svg').style['z-index'] = 1000;
+
     var strokeWidth = 700 / allCountries.length;
     
     lines.selectAll("line.country")
@@ -215,72 +213,6 @@ function updateViz(){
         tooltip.style.display = 'none';
         fade(1, 500, d);
       });
-      /*
-      .on('click', function(sourceCountry) {
-          console.log("click");
-          loading(false);
-          restoreCountries();
-          d3.json(HOST + COUNTRY_LINKS_URL.format(sourceCountry.iso, year), function(links) { 
-            document.getElementById('big_year').innerHTML = sourceCountry.name
-            links = links.rows;
-            loading(true);
-            var max_sum = d3.max(links, function(a) { return a.sum});
-            var linksByIso = {};
-            for(var i = 0; i < links.length; ++i) {
-              linksByIso[links[i].from_iso] = links[i].sum;
-            }
-    
-            lines.selectAll('line.country')
-              .filter(function(d, i) {
-                if(d.iso == sourceCountry.iso) return false;
-                for(var l = 0; l < links.length; ++l) {
-                  if(d.iso == links[l].from_iso) {
-                    return true;
-                  }
-                }
-                return false;
-              })
-              .transition()
-                .attr('x2', function(d) {
-                    var f = 1.0 - 0.2*(Math.sqrt(linksByIso[d.iso]/max_sum));
-                    return f*(settings.MAIN_BALL_RADIO)*Math.cos(angleFromIdx(d.idx));
-                })
-                .attr('y2', function(d) {
-                    var f = 1.0 - 0.2*(Math.sqrt(linksByIso[d.iso]/max_sum));
-                    return f*(settings.MAIN_BALL_RADIO)*Math.sin(angleFromIdx(d.idx));
-                })
-    
-            lines.selectAll('path.link').remove()
-            lines.selectAll('path.link')
-              .data(links.filter(function(d) {
-                return allCountriesByISO[d.from_iso] !== undefined;
-              }))
-              .enter()
-                .append('path')
-                .attr('class', 'link')
-                .attr("d", function(d) {
-                  var op = sourceCountry.position()
-                  var f = 1.0 - 0.2*Math.sqrt(d.sum/max_sum);
-                  var tp = allCountriesByISO[d.from_iso].position(f*0.98);
-                  var s = "M " + op.x + "," + op.y;
-                  var e = "C 0,0 0,0 " + tp.x +"," + tp.y;
-                  return s + " " + e; //'M 0,420 C 110,220 220,145 0,0'
-                })
-                .attr('fill', 'none')
-                .attr('stroke', function(d) {
-                  var t = allCountriesByISO[d.from_iso];
-                  return colorByRegion(t.region); 
-                })
-                .attr('stroke-width', function(d) {
-                  return 0.2 + 1.4*d.sum/max_sum;
-                })
-                .attr('opacity', function(d) {
-                  return 0.3 + 0.5*d.sum/max_sum;
-                });
-          });
-    
-    
-      });*/
     
       var restoreCountries = function() {
         returning_back = true;
@@ -310,6 +242,42 @@ function updateViz(){
             })
       }
       restoreCountries();
+      
+      vizCreated = true;
+}
+
+function updateViz(){
+    
+    if (!vizCreated){
+        createViz();
+        return;
+    } else {
+        lines.selectAll("line.country")
+          .data(allCountries)
+          .transition()
+            .attr('x2', function(d) {
+                 var c = computedCountriesData[d.countryCode];
+                  var v = 0;
+                  if (c) {
+                    v = c.value;
+                  }
+                //console.log("x2 value="+v);
+                return (settings.MAIN_BALL_RADIO + v*settings.MAX_LINE_SIZE)*Math.cos(angleFromIdx(d.idx));
+            })
+            .attr('y2', function(d) {
+                  var c = computedCountriesData[d.countryCode];
+                  var v = 0;
+                  if (c) {
+                    v = c.value;
+                  }
+                //console.log("y2 value="+v);
+                return (settings.MAIN_BALL_RADIO + v*settings.MAX_LINE_SIZE)*Math.sin(angleFromIdx(d.idx));
+            })
+            .each("end", function() {
+              //returning_back = false;
+            });
+    }        
+    
 
 }    
 
