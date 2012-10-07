@@ -14,8 +14,8 @@ var tooltip;
 var vizCreated = false;
 
 //available 
-var DEFAULT_MIN_COLOR = d3.rgb(0,40,40);
-var DEFAULT_MAX_COLOR = d3.rgb(255,0,0);
+var DEFAULT_MIN_COLOR = "#002828";
+var DEFAULT_MAX_COLOR = "#9e5de8";
 var COLOR_BY_CONTINENT = "Color by continent";
 var COLOR_BY_TOTAL_MEDALS = "Color by total medals";
 var VALUE_FROM_TOTAL_MEDALS = "Total Medals";
@@ -41,7 +41,7 @@ var ctrlMaxColor = colorFolders.addColor(vizOptions, "maxColor");
 colorFolders.close(); 
 gui.close();
 //var optionsStore = jQuery.extend(true, {}, vizOptions);
-gui.remember(vizOptions);
+//gui.remember(vizOptions);
 ctrlMinColor.onChange(function(value){
     updateCurrentVizData();
 });
