@@ -204,7 +204,7 @@ function createViz(){
           return (settings.MAIN_BALL_RADIO + v*settings.MAX_LINE_SIZE)*Math.sin(angleFromIdx(d.idx));
       })
       .attr('stroke', function(d) {
-        return colorByCountry(d.countryCode); 
+          return "#FF0000"; //default color
       })
       .attr('stroke-width', strokeWidth)
       .on("mouseover", function(d, e) {
@@ -235,6 +235,17 @@ function createViz(){
                   }
                 //console.log("x2 value="+v);
                 return (settings.MAIN_BALL_RADIO + v*settings.MAX_LINE_SIZE)*Math.cos(angleFromIdx(d.idx));
+            })
+            .attr("stroke",function(d){
+                var item = computedCountriesData[d.countryCode];
+                if (item){
+                    return colorForItem(item);
+                } else {
+                    //no item found for this Edition/Country
+                    //console.log("No item found for " + d.countryCode);
+                    return"#00FF00";
+                }
+                //return colorByCountry(d.countryCode); 
             })
             .attr('y2', function(d) {
                   var c = computedCountriesData[d.countryCode];
@@ -272,6 +283,17 @@ function updateViz(){
                 //console.log("x2 value="+v);
                 return (settings.MAIN_BALL_RADIO + v*settings.MAX_LINE_SIZE)*Math.cos(angleFromIdx(d.idx));
             })
+            .attr("stroke",function(d){
+                var item = computedCountriesData[d.countryCode];
+                if (item){
+                    return colorForItem(item);
+                } else {
+                    //no item found for this Edition/Country
+                    //console.log("No item found for " + d.countryCode);
+                    return"#00FF00";
+                }
+                //return colorByCountry(d.countryCode); 
+            })
             .attr('y2', function(d) {
                   var c = computedCountriesData[d.countryCode];
                   var v = 0;
@@ -307,8 +329,16 @@ function angleFromIdx(i) {
   return -Math.PI/2 + (i-1)*2*Math.PI/allCountries.length;
 }
 
+function colorForItem(item){
+    return colorByCountry(item.CountryCode);    
+}
 
 function colorByCountry(countryCode) {
+    
+    
+    //return d3.interpolateRgb(d3.rgb(0,0,255),d3.rgb(0,255,0) )(.39);
+    //return d3.interpolateRgb(d3.rgb("#FF5D45"),d3.rgb("#FFFF96") )(.39);
+    
     var countryInfo = countriesData[countryCode];
     if (countryInfo){
         var continentCode = countryInfo.continent_code;
@@ -326,13 +356,6 @@ function colorByCountry(countryCode) {
         return '#FFFF66';
     }        
     
-    /*
-    \definecolor{r1}{RGB}{0,129,188}
- \definecolor{r2}{RGB}{252,177,49}
- \definecolor{r3}{RGB}{35,34,35}
- \definecolor{r4}{RGB}{0,157,87}
- \definecolor{r5}{RGB}{238,50,78}
-    */
 }
 
 function removeAllLinks() {
