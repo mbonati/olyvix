@@ -32,7 +32,7 @@ var vizOptions = {
 
 // -- DAT.GUI - viz ui controls
 // http://workshop.chromeexperiments.com/examples/gui/#1--Basic-Usage
-var gui = new dat.GUI();
+var gui = new dat.GUI({ load: JSON });
 var ctrlValueFrom = gui.add(vizOptions, 'value', [VALUE_FROM_TOTAL_MEDALS, VALUE_FROM_RANK, VALUE_FROM_GOLD_MEDALS, VALUE_FROM_SILVER_MEDALS, VALUE_FROM_BRONZE_MEDALS]);
 var ctrlColorBy = gui.add(vizOptions, 'color', [COLOR_BY_CONTINENT, COLOR_BY_TOTAL_MEDALS]);
 var colorFolders = gui.addFolder('Colors');
@@ -40,7 +40,8 @@ var ctrlMinColor = colorFolders.addColor(vizOptions, "minColor");
 var ctrlMaxColor = colorFolders.addColor(vizOptions, "maxColor");
 colorFolders.close(); 
 gui.close();
-
+//var optionsStore = jQuery.extend(true, {}, vizOptions);
+gui.remember(vizOptions);
 ctrlMinColor.onChange(function(value){
     updateCurrentVizData();
 });
@@ -234,7 +235,8 @@ function createViz(){
     document.getElementById('svg').style['z-index'] = 1000;
     //adjust the z-index of gui controls
     d3.selectAll(".dg.ac").style('z-index', 2000);    
-
+    document.getElementById('titleContainer').style['z-index'] = 100;
+    
     var strokeWidth = 700 / allCountries.length;
     
     lines.selectAll("line.country")
