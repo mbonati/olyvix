@@ -18,24 +18,27 @@ var DEFAULT_MIN_COLOR = d3.rgb(0,40,40);
 var DEFAULT_MAX_COLOR = d3.rgb(255,0,0);
 var COLOR_BY_CONTINENT = "Color by continent";
 var COLOR_BY_TOTAL_MEDALS = "Color by total medals";
+var VALUE_FROM_TOTAL_MEDALS = "Total Medals";
+var VALUE_FROM_RANK = "Rank";
+var VALUE_FROM_GOLD_MEDALS = "Gold Medals";
+var VALUE_FROM_SILVER_MEDALS = "Silver Medals";
+var VALUE_FROM_BRONZE_MEDALS = "Bronze Medals";
 var vizOptions = {
-    colorBy: COLOR_BY_CONTINENT,
-    speed: 0.8,
+    color: COLOR_BY_CONTINENT,
     minColor: DEFAULT_MIN_COLOR,
     maxColor: DEFAULT_MAX_COLOR,
-    displayOutline : true
+    value: VALUE_FROM_TOTAL_MEDALS,
 }
 
 // -- DAT.GUI - viz ui controls
 // http://workshop.chromeexperiments.com/examples/gui/#1--Basic-Usage
 var gui = new dat.GUI();
-var ctrlColorBy = gui.add(vizOptions, 'colorBy', [COLOR_BY_CONTINENT, COLOR_BY_TOTAL_MEDALS]);
+var ctrlValueFrom = gui.add(vizOptions, 'value', [VALUE_FROM_TOTAL_MEDALS, VALUE_FROM_RANK, VALUE_FROM_GOLD_MEDALS, VALUE_FROM_SILVER_MEDALS, VALUE_FROM_BRONZE_MEDALS]);
+var ctrlColorBy = gui.add(vizOptions, 'color', [COLOR_BY_CONTINENT, COLOR_BY_TOTAL_MEDALS]);
 var colorFolders = gui.addFolder('Colors');
 var ctrlMinColor = colorFolders.addColor(vizOptions, "minColor");
 var ctrlMaxColor = colorFolders.addColor(vizOptions, "maxColor");
 colorFolders.close(); 
-gui.add(vizOptions, 'speed', -5, 5);
-gui.add(vizOptions, 'displayOutline');
 gui.close();
 
 ctrlMinColor.onChange(function(value){
@@ -395,7 +398,7 @@ function angleFromIdx(i) {
 
 function colorForItem(item){
     
-    if (vizOptions.colorBy == COLOR_BY_TOTAL_MEDALS){
+    if (vizOptions.color == COLOR_BY_TOTAL_MEDALS){
         return colorByTotalMedals(item);
     } else {
         return colorByCountry(item.countryCode);
