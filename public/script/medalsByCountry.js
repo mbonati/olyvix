@@ -27,6 +27,7 @@ var vizOptions = {
 }
 
 // -- DAT.GUI - viz ui controls
+// http://workshop.chromeexperiments.com/examples/gui/#1--Basic-Usage
 var gui = new dat.GUI();
 var ctrlColorBy = gui.add(vizOptions, 'colorBy', [COLOR_BY_CONTINENT, COLOR_BY_TOTAL_MEDALS]);
 var colorFolders = gui.addFolder('Colors');
