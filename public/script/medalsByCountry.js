@@ -464,4 +464,4 @@ function startViz(){
 }
 
 // entry point
-startViz();
+//startViz();
