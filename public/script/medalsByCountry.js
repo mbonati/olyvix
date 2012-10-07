@@ -21,6 +21,7 @@ var settings = {
 
 //Countries related data structures
 var allCountries = new Array();
+var countriesData = {};
 
 //Editions related data structures
 var editions = new Array();
@@ -47,6 +48,20 @@ var dataSource = new Miso.Dataset({
     { name : "Total", type : "number" },
   ]
 });
+
+var countriesDataSource = new Miso.Dataset({
+    url : "../data/vwCountries.csv",
+    delimiter : ",",
+    columns : [
+        { name : "code", type: "string" },
+        { name : "continent_code", type: "string" },
+        { name : "name", type: "string" },
+        { name : "iso3", type: "string" },
+        { name : "number", type: "number" },
+        { name : "full_name", type: "string" },
+    ]
+});
+
 
 svg = d3.select("body").append("svg:svg")
       .attr("width", w)
@@ -189,7 +204,7 @@ function createViz(){
           return (settings.MAIN_BALL_RADIO + v*settings.MAX_LINE_SIZE)*Math.sin(angleFromIdx(d.idx));
       })
       .attr('stroke', function(d) {
-        return colorByCountry(d.CountryCode); 
+        return colorByCountry(d.countryCode); 
       })
       .attr('stroke-width', strokeWidth)
       .on("mouseover", function(d, e) {
@@ -293,8 +308,31 @@ function angleFromIdx(i) {
 }
 
 
-function colorByCountry(r) {
-    return '#FFFF66';
+function colorByCountry(countryCode) {
+    var countryInfo = countriesData[countryCode];
+    if (countryInfo){
+        var continentCode = countryInfo.continent_code;
+        if (continentCode=='EU')
+            return '#009D57';
+        else if (continentCode=='OC')
+            return '#0081BC';
+        else if (continentCode=='OC')
+            return '#0081BC';
+        else if (continentCode=='AS')
+            return '#7EA8ED';
+        else
+            return '#FFFF66';
+    } else {
+        return '#FFFF66';
+    }        
+    
+    /*
+    \definecolor{r1}{RGB}{0,129,188}
+ \definecolor{r2}{RGB}{252,177,49}
+ \definecolor{r3}{RGB}{35,34,35}
+ \definecolor{r4}{RGB}{0,157,87}
+ \definecolor{r5}{RGB}{238,50,78}
+    */
 }
 
 function removeAllLinks() {
@@ -341,6 +379,29 @@ function loadData(){
 	  	dataReady();
 	  }
 	});
+}
+
+function loadCountriesData(){
+    dataLoading = true;
+    loading(false);
+    countriesDataSource.fetch({
+        success : function(){
+            countriesDataReady();
+        }
+    });
+}
+
+function countriesDataReady(){
+    loading(true); 
+	dataLoading = false;
+    
+    countriesData = {};
+    countriesDataSource.each(function(row){
+        countriesData[row.iso3] = row;
+    });
+    console.log("Italy : " + countriesData['ITA']);
+    
+    loadData();
 }
 
 //called when load data has been completed
@@ -398,8 +459,8 @@ function isDataLoading(){
 // viz lifecycle
 function startViz(){
     tooltip = document.getElementById('tooltip');
-
-    loadData();
+    
+    loadCountriesData();
 }
 
 // entry point
