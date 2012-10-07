@@ -13,6 +13,13 @@ var svg, lines;
 var tooltip;
 var vizCreated = false;
 
+//available 
+var COLOR_BY_CONTENT = "COLOR_BY_CONTENT";
+var COLOR_BY_TOTAL_MEDALS = "COLOR_BY_TOTAL_MEDALS";
+var vizOptions = {
+    colorBy: COLOR_BY_CONTENT
+}
+
 // -- settings
 var settings = {
   MAIN_BALL_RADIO: 210,
@@ -307,7 +314,7 @@ function updateViz(){
                 } else {
                     //no item found for this Edition/Country
                     //console.log("No item found for " + d.countryCode);
-                    return"#00FF00";
+                    return"#000000";
                 }
                 //return colorByCountry(d.countryCode); 
             })
@@ -347,7 +354,20 @@ function angleFromIdx(i) {
 }
 
 function colorForItem(item){
-    return colorByCountry(item.countryCode);    
+    
+    if (vizOptions.colorBy == COLOR_BY_TOTAL_MEDALS){
+        return colorByTotalMedals(item);
+    } else {
+        return colorByCountry(item.countryCode);
+    }
+    
+}
+
+function colorByTotalMedals(item){
+    var totPerc =  item.total/(currentGameEdition.editionStats.maxTotalMedals-currentGameEdition.editionStats.minTotalMedals);
+    totPerc =  Math.pow(parseFloat(totPerc), 0.47);
+    //console.log(item.countryCode + ": perc="+totPerc + " total="+item.total + " max="+currentGameEdition.editionStats.maxTotalMedals +" min="+currentGameEdition.editionStats.minTotalMedals);
+    return d3.interpolateRgb(d3.rgb(0,40,40),d3.rgb(255,0,0) )(totPerc);
 }
 
 function colorByCountry(countryCode) {
