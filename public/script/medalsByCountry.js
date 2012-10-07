@@ -14,17 +14,38 @@ var tooltip;
 var vizCreated = false;
 
 //available 
-var COLOR_BY_CONTENT = "COLOR_BY_CONTENT";
-var COLOR_BY_TOTAL_MEDALS = "COLOR_BY_TOTAL_MEDALS";
+var DEFAULT_MIN_COLOR = d3.rgb(0,40,40);
+var DEFAULT_MAX_COLOR = d3.rgb(255,0,0);
+var COLOR_BY_CONTINENT = "Color by continent";
+var COLOR_BY_TOTAL_MEDALS = "Color by total medals";
 var vizOptions = {
-    colorBy: COLOR_BY_CONTENT
+    colorBy: COLOR_BY_CONTINENT,
+    speed: 0.8,
+    minColor: DEFAULT_MIN_COLOR,
+    maxColor: DEFAULT_MAX_COLOR,
+    displayOutline : true
 }
+
+// -- DAT.GUI - viz ui controls
+var gui = new dat.GUI();
+gui.add(vizOptions, 'colorBy', [COLOR_BY_CONTINENT, COLOR_BY_TOTAL_MEDALS]);
+var colorFolders = gui.addFolder('Colors');
+colorFolders.addColor(vizOptions, "minColor");
+colorFolders.addColor(vizOptions, "maxColor");
+colorFolders.close();
+gui.add(vizOptions, 'speed', -5, 5);
+gui.add(vizOptions, 'displayOutline');
+gui.close();
+//-----------------------------
+
+
 
 // -- settings
 var settings = {
   MAIN_BALL_RADIO: 210,
   MAX_LINE_SIZE: 200,
 };
+
 
 //Countries related data structures
 var allCountries = new Array();
@@ -367,7 +388,7 @@ function colorByTotalMedals(item){
     var totPerc =  item.total/(currentGameEdition.editionStats.maxTotalMedals-currentGameEdition.editionStats.minTotalMedals);
     totPerc =  Math.pow(parseFloat(totPerc), 0.47);
     //console.log(item.countryCode + ": perc="+totPerc + " total="+item.total + " max="+currentGameEdition.editionStats.maxTotalMedals +" min="+currentGameEdition.editionStats.minTotalMedals);
-    return d3.interpolateRgb(d3.rgb(0,40,40),d3.rgb(255,0,0) )(totPerc);
+    return d3.interpolateRgb(vizOptions.minColor,vizOptions.maxColor)(totPerc);
 }
 
 function colorByCountry(countryCode) {
