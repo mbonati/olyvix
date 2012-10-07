@@ -28,17 +28,27 @@ var vizOptions = {
 
 // -- DAT.GUI - viz ui controls
 var gui = new dat.GUI();
-gui.add(vizOptions, 'colorBy', [COLOR_BY_CONTINENT, COLOR_BY_TOTAL_MEDALS]);
+var ctrlColorBy = gui.add(vizOptions, 'colorBy', [COLOR_BY_CONTINENT, COLOR_BY_TOTAL_MEDALS]);
 var colorFolders = gui.addFolder('Colors');
-colorFolders.addColor(vizOptions, "minColor");
-colorFolders.addColor(vizOptions, "maxColor");
-colorFolders.close();
+var ctrlMinColor = colorFolders.addColor(vizOptions, "minColor");
+var ctrlMaxColor = colorFolders.addColor(vizOptions, "maxColor");
+colorFolders.close(); 
 gui.add(vizOptions, 'speed', -5, 5);
 gui.add(vizOptions, 'displayOutline');
 gui.close();
+
+ctrlMinColor.onChange(function(value){
+    updateCurrentVizData();
+});
+
+ctrlMaxColor.onChange(function(value){
+    updateCurrentVizData();
+});
+
+ctrlColorBy.onChange(function(value) {
+    updateCurrentVizData();
+});
 //-----------------------------
-
-
 
 // -- settings
 var settings = {
@@ -311,6 +321,12 @@ function createViz(){
       
       vizCreated = true;
 }
+
+// Update the current viz data
+function updateCurrentVizData(){
+  updateGameEditionData(currentGameEdition);
+}
+
 
 function updateViz(){
     
