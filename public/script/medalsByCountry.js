@@ -218,6 +218,8 @@ function createViz(){
     
     document.getElementById('svg').style['position'] = 'absolute';
     document.getElementById('svg').style['z-index'] = 1000;
+    //adjust the z-index of gui controls
+    d3.selectAll(".dg.ac").style('z-index', 2000);    
 
     var strokeWidth = 700 / allCountries.length;
     
@@ -542,6 +544,7 @@ function startViz(){
     tooltip = document.getElementById('tooltip');
     
     loadCountriesData();
+
 }
 
 // entry point
