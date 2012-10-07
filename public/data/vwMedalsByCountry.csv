@@ -1,4 +1,4 @@
-"GamesId","Year","HostCity","CountryCode","CountryName","Rank","Gold","Silver","Bronze","Total"
+"gamesId","year","hostCity","countryCode","countryName","rank","gold","silver","bronze","total"
 27,2012,"London","USA","United States",1,46,29,29,104
 27,2012,"London","CHN","China",2,38,27,23,88
 27,2012,"London","GBR","Great Britain",3,29,17,19,65

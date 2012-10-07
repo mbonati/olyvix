@@ -36,16 +36,16 @@ var dataSource = new Miso.Dataset({
   url : "../data/vwMedalsByCountry.csv",
   delimiter : ",",
   columns : [
-    { name : "GamesId" , type : "number" },
-    { name : "Year", type : "number" },
-    { name : "HostCity", type : "string" },
-    { name : "CountryCode", type : "string" },
-    { name : "CountryName", type : "string" },
-    { name : "Rank", type : "number" },
-    { name : "Gold", type : "number" },
-    { name : "Silver", type : "number" },
-    { name : "Bronze", type : "number" },
-    { name : "Total", type : "number" },
+    { name : "gamesId" , type : "number" },
+    { name : "year", type : "number" },
+    { name : "hostCity", type : "string" },
+    { name : "countryCode", type : "string" },
+    { name : "countryName", type : "string" },
+    { name : "rank", type : "number" },
+    { name : "gold", type : "number" },
+    { name : "silver", type : "number" },
+    { name : "bronze", type : "number" },
+    { name : "total", type : "number" },
   ]
 });
 
@@ -117,10 +117,27 @@ function updateGameEditionData(edition) {
   //get the rows for the current edition
   editionsData = dataSource.where({
     rows: function(row){
-        return (row.GamesId == edition.gamesId);
+        return (row.gamesId == edition.gamesId);
     }
   });
-
+    
+    //Compute statistic
+    if (edition.editionStats==null){
+        edition.editionStats = {
+            minTotalMedals: editionsData.min("total"),
+            maxTotalMedals: editionsData.max("total"),
+            minGoldMedals : editionsData.min("gold"),
+            maxGoldMedals : editionsData.max("gold"),
+            minSilverMedals : editionsData.min("silver"),
+            maxSilverMedals : editionsData.max("silver"),
+            minBronzeMedals : editionsData.min("bronze"),
+            maxBronzeMedals : editionsData.max("bronze"),
+            minRankMedals : editionsData.min("rank"),
+            maxRankMedals : editionsData.max("rank")
+        }
+    }
+    //console.log("Min: " + minTotalMedals + " Max: " + maxTotalMedals + " editionStats:" + editionStats);
+    
     computedCountriesData = {};//new Array();
     
     var i = 0;
@@ -135,12 +152,12 @@ function updateGameEditionData(edition) {
                     y: f*settings.MAIN_BALL_RADIO*Math.sin(angleFromIdx(this.idx))
                }
           };
-     //countryItem.value = row.Total;// Math.pow(parseFloat(row.Total)/126993.0, 0.17);
-     countryItem.value = Math.pow(parseFloat(row.Total)/12699.0, 0.17);
+     //countryItem.value = row.total;// Math.pow(parseFloat(row.total)/126993.0, 0.17);
+     countryItem.value = Math.pow(parseFloat(row.total)/12699.0, 0.17);
      countryItem.angle = function() {
                 return angleFromIdx(this.idx);
           };
-    computedCountriesData[countryItem.CountryCode] = countryItem;
+    computedCountriesData[countryItem.countryCode] = countryItem;
     
     //console.log("countryItem: " + countryItem)
   });
@@ -330,7 +347,7 @@ function angleFromIdx(i) {
 }
 
 function colorForItem(item){
-    return colorByCountry(item.CountryCode);    
+    return colorByCountry(item.countryCode);    
 }
 
 function colorByCountry(countryCode) {
@@ -435,26 +452,26 @@ function dataReady(){
     //build editions data array
     //group the data for retrieve the editions
     editions = new Array();
-    dataSource.groupBy("Year",["HostCity","GamesId"],{
+    dataSource.groupBy("year",["hostCity","gamesId"],{
             method:function(arr){
                 return arr[0];
             }
         }).each(function(row){
-                var editionItem = { gamesId : row.GamesId, hostCity: row.HostCity, year : row.Year };
+                var editionItem = { gamesId : row.gamesId, hostCity: row.hostCity, year : row.year };
                 editions.push(editionItem);
             });
-    console.log("Total editions: " + editions.length);
+    console.log("total editions: " + editions.length);
     editions.reverse();
     
     //build the All Countries data store
     var rowIndex = 0;
     allCountries = new Array();
-    dataSource.groupBy("CountryCode",["CountryName"],{
+    dataSource.groupBy("countryCode",["countryName"],{
         method:function(arr){
             return arr[0];
         }
     }).each(function(row){
-        var countryItem = { countryCode : row.CountryCode, countryName: row.CountryName };
+        var countryItem = { countryCode : row.countryCode, countryName: row.countryName };
         countryItem.idx = rowIndex++;
         countryItem.angle = function() {
                 return angleFromIdx(this.idx);
@@ -468,7 +485,7 @@ function dataReady(){
           };
         allCountries.push(countryItem);
     });
-    console.log("Total countries: " + allCountries.length);
+    console.log("total countries: " + allCountries.length);
     
     setGamesEditionIndex(editions.length-1);
 }
