@@ -53,6 +53,10 @@ ctrlMaxColor.onChange(function(value){
 ctrlColorBy.onChange(function(value) {
     updateCurrentVizData();
 });
+
+ctrlValueFrom.onChange(function(value) {
+    updateCurrentVizData();
+});
 //-----------------------------
 
 // -- settings
@@ -291,10 +295,10 @@ function createViz(){
           .data(allCountries)
           .transition()
             .attr('x2', function(d) {
-                 var c = computedCountriesData[d.countryCode];
+                var item = computedCountriesData[d.countryCode];
                   var v = 0;
-                  if (c) {
-                    v = c.value;
+                  if (item) {
+                    v = valueForItem(item);
                   }
                 //console.log("x2 value="+v);
                 return (settings.MAIN_BALL_RADIO + v*settings.MAX_LINE_SIZE)*Math.cos(angleFromIdx(d.idx));
@@ -311,10 +315,10 @@ function createViz(){
                 //return colorByCountry(d.countryCode); 
             })
             .attr('y2', function(d) {
-                  var c = computedCountriesData[d.countryCode];
+                var item = computedCountriesData[d.countryCode];
                   var v = 0;
-                  if (c) {
-                    v = c.value;
+                  if (item) {
+                    v = valueForItem(item);
                   }
                 //console.log("y2 value="+v);
                 return (settings.MAIN_BALL_RADIO + v*settings.MAX_LINE_SIZE)*Math.sin(angleFromIdx(d.idx));
@@ -344,10 +348,10 @@ function updateViz(){
           .data(allCountries)
           .transition()
             .attr('x2', function(d) {
-                 var c = computedCountriesData[d.countryCode];
+                var item = computedCountriesData[d.countryCode];
                   var v = 0;
-                  if (c) {
-                    v = c.value;
+                  if (item) {
+                    v = valueForItem(item);
                   }
                 //console.log("x2 value="+v);
                 return (settings.MAIN_BALL_RADIO + v*settings.MAX_LINE_SIZE)*Math.cos(angleFromIdx(d.idx));
@@ -364,10 +368,10 @@ function updateViz(){
                 //return colorByCountry(d.countryCode); 
             })
             .attr('y2', function(d) {
-                  var c = computedCountriesData[d.countryCode];
+                var item = computedCountriesData[d.countryCode];
                   var v = 0;
-                  if (c) {
-                    v = c.value;
+                  if (item) {
+                    v = valueForItem(item);
                   }
                 //console.log("y2 value="+v);
                 return (settings.MAIN_BALL_RADIO + v*settings.MAX_LINE_SIZE)*Math.sin(angleFromIdx(d.idx));
@@ -438,6 +442,10 @@ function colorByCountry(countryCode) {
         return '#FFFF66';
     }        
     
+}
+
+function valueForItem(item){
+    return item.value;
 }
 
 function removeAllLinks() {
