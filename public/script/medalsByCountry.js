@@ -200,7 +200,11 @@ function updateGameEditionData(edition) {
                }
           };
      //countryItem.value = row.total;// Math.pow(parseFloat(row.total)/126993.0, 0.17);
-     countryItem.value = Math.pow(parseFloat(row.total)/12699.0, 0.17);
+     countryItem.valueTotal = Math.pow(parseFloat(row.total)/12699.0, 0.17);
+     countryItem.valueGold = Math.pow(parseFloat(row.gold)/12699.0, 0.17);
+     countryItem.valueSilver = Math.pow(parseFloat(row.silver)/12699.0, 0.17);
+     countryItem.valueBronze = Math.pow(parseFloat(row.bronze)/12699.0, 0.17);
+     countryItem.valueRank = Math.pow(parseFloat(row.rank)/12699.0, 0.17);
      countryItem.angle = function() {
                 return angleFromIdx(this.idx);
           };
@@ -445,7 +449,20 @@ function colorByCountry(countryCode) {
 }
 
 function valueForItem(item){
-    return item.value;
+
+    if (vizOptions.value==VALUE_FROM_TOTAL_MEDALS)
+        return item.valueTotal;
+    else if (vizOptions.value==VALUE_FROM_RANK)
+        return item.valueRank;
+    else if (vizOptions.value==VALUE_FROM_GOLD_MEDALS)
+        return item.valueGold;
+    else if (vizOptions.value==VALUE_FROM_SILVER_MEDALS)
+        return item.valueSilver;
+    else if (vizOptions.value==VALUE_FROM_BRONZE_MEDALS)
+        return item.valueBronze;
+    else
+        return 0;
+        
 }
 
 function removeAllLinks() {
