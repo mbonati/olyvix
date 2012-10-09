@@ -1,3 +1,4 @@
+var BASE_DATA_URL = "../data/";
 
 var loading_timer = null;
 var dataLoading = false;
@@ -80,7 +81,7 @@ var editionsData = null; //miso dataset
 var computedCountriesData = {}; //new Array();
 
 var dataSource = new Miso.Dataset({
-  url : "../data/vwMedalsByCountry.csv",
+  url : BASE_DATA_URL + "vwMedalsByCountry.csv",
   delimiter : ",",
   columns : [
     { name : "gamesId" , type : "number" },
@@ -97,7 +98,7 @@ var dataSource = new Miso.Dataset({
 });
 
 var countriesDataSource = new Miso.Dataset({
-    url : "../data/vwCountries.csv",
+    url : BASE_DATA_URL + "vwCountries.csv",
     delimiter : ",",
     columns : [
         { name : "code", type: "string" },
