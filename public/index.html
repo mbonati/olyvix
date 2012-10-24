@@ -1,5 +1,66 @@
-<html>
-    <body>
-        <a href="medalsByCountry.html">Medals by country</a> 
-    </body>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>OlyVix</title>
+    <!-- Bootstrap -->
+    <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet">
+    
+    <style>
+      body {
+        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+      }
+    </style>
+    
+    <link href="css/boostrap/bootstrap-responsive.css" rel="stylesheet">
+    
+ </head>
+ 
+<body>
+
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="#">OlyVix</a>
+          <div class="nav-collapse collapse">
+            <ul class="nav">
+              <li class="active"><a href="#">Home</a></li>
+              <li><a href="#about">About</a></li>
+              <li><a href="#contact">Contact</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+
+      <h1>OlyVix Home</h1>
+      <p>A site dedicated to the Olympics Data Visualizations.</p>
+
+        <div class="btn-group">
+          <button class="btn btn-inverse dropdown-toggle" data-toggle="dropdown" href="#">
+            Available Visualizations
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+                <li><a tabindex="-1" href="views/medalsByCountry.html">Medals by country</a></li>
+                <li><a tabindex="-1" href="views/medalsByCountryMap.html">Medals by country Map</a></li>
+          </ul>
+        </div>
+              
+    </div> <!-- /container -->
+    
+
+</body>
+
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script src="./script/bootstrap/bootstrap.min.js"></script> 
+
 </html>
