@@ -1,0 +1,111 @@
+<html>
+<head>
+	<title>OlyViz Medals By Country Map</title>
+    
+	<link href="../css/reset.css" rel="stylesheet" type="text/css" />
+	<link href="../css/style.css" rel="stylesheet" type="text/css" />
+	<link href="../css/fonts.css" rel="stylesheet" type="text/css" />
+    
+    <link href="../css/colorbrewer.css" rel="stylesheet" type="text/css" />
+
+</head>
+<body>
+
+<div id="titleContainer">
+	<h1>Medals By Country Map</h1>
+	<h2>Explore Olympic Games medals ranking by editions. <br/><br/>Click on the bars to explore deeper</h2>
+    <input type="button" value="Update" onclick="updateViz()"/>
+</div>
+
+
+</body>
+
+
+
+<script src="http://d3js.org/d3.v2.js"></script>
+<script type="text/javascript" src="../script/jquery/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../script/miso.ds.deps.min.0.2.1.js"></script>
+<script type="text/javascript" src="../script/underscore-min.1.4.1.js"></script>
+<script type="text/javascript" src="../script/dat.gui/dat.gui.min.js"></script>
+
+<!-- App -->
+<!--<script src="script/medalsByCountryMap.js"></script>-->
+
+
+    <script type="text/javascript">
+        var svg;
+        var projection;
+        var centered;
+        var path;
+        var g;
+        
+	    $(document).ready(function(){
+	        // entry point
+            //startViz();
+            var w = innerWidth -45,
+                h = innerHeight-45;
+    
+            projection = d3.geo.mercator()
+                                .scale(750)
+                                .translate( [730, 450]);
+                
+            path = d3.geo.path()
+                .projection(projection);
+                //.translate([680, 360]));
+
+            svg = d3.select("body").append("svg:svg")
+                .attr("width",w)
+                .attr("height", h)
+                .attr("id", 'svg');
+            
+            d3.json("../data/geo/world-countries.wa.json", function(collection) {
+                    feature = svg.selectAll("path")
+                        .data(collection.features)
+                        .enter().append("svg:path")
+                        .attr("d", path)
+                        .attr('stroke', function(d) {
+                             return "#AFAFAF"; //default color
+                        })
+                        .attr('stroke-width', 1)
+                        .attr('fill', function(d){
+                                return colorForItem(d);
+                            })
+                        .on("click", click)
+                        .append("svg:title")
+                        .text(function(d){
+                            return "d.name TODO!!";    
+                        });
+                        
+            });
+            
+
+        });
+        
+
+        function colorForItem(item){
+            var random = randomInt(0,100);
+            return d3.interpolateRgb("#F1EEF6", "#034E7B")(random/100);
+        }
+        
+        //Return a random number between min and max
+        function randomInt(min, max){
+            return Math.floor((Math.random()*max)+1)+min;
+        }
+        
+        function updateViz(){
+            feature = svg.selectAll("path")
+                .transition()
+                .attr('fill', function(d){
+                        return colorForItem(d);
+                    });
+        }
+        
+        window.onresize = function(event) {
+          svg.attr("width", window.innerWidth-45);
+          svg.attr("height", window.innerHeight-45);
+        }
+
+        
+	</script>
+    
+</html>
