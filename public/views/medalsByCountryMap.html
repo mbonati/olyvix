@@ -44,11 +44,18 @@
             //startViz();
             var w = innerWidth -45,
                 h = innerHeight-45;
-    
-            projection = d3.geo.mercator()
+        
+            /*
+             projection = d3.geo.mercator()
                                 .scale(750)
                                 .translate( [730, 450]);
-                
+              
+              */
+              
+             projection = d3.geo.mercator()
+                                .scale(12000)
+                                .translate([530, 1800]);
+              
             path = d3.geo.path()
                 .projection(projection);
                 //.translate([680, 360]));
@@ -58,7 +65,8 @@
                 .attr("height", h)
                 .attr("id", 'svg');
             
-            d3.json("../data/geo/world-countries.wa.json", function(collection) {
+            //d3.json("../data/geo/world-countries.wa.json", function(collection) {
+            d3.json("../data/geo/regioni_semplici.json", function(collection) {
                     feature = svg.selectAll("path")
                         .data(collection.features)
                         .enter().append("svg:path")
