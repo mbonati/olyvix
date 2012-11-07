@@ -1,0 +1,105 @@
+<html>
+<head>
+	<title>OlyViz Test Gauges</title>
+    
+	<link href="../../css/reset.css" rel="stylesheet" type="text/css" />
+	<!--<link href="../../css/style.css" rel="stylesheet" type="text/css" />-->
+	<link href="../../css/fonts.css" rel="stylesheet" type="text/css" />
+    
+    <link href="../../css/colorbrewer.css" rel="stylesheet" type="text/css" />
+
+</head>
+<body>
+
+<div id="titleContainer">
+	<h1>Test Gauges</h1>
+    <input type="button" value="Update" onclick="updateViz()"/>
+</div>
+
+
+</body>
+
+<style>
+.progress-meter .background {
+  fill: #ccc;
+}
+
+.progress-meter .foreground {
+  fill: #000;
+}
+
+.progress-meter text {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 24px;
+  font-weight: bold;
+}
+</style>
+
+
+<script src="http://d3js.org/d3.v2.js"></script>
+<script type="text/javascript" src="../../script/jquery/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../../script/miso.ds.deps.min.0.2.1.js"></script>
+<script type="text/javascript" src="../../script/underscore-min.1.4.1.js"></script>
+<script type="text/javascript" src="../../script/dat.gui/dat.gui.min.js"></script>
+
+<!-- App -->
+
+
+    <script type="text/javascript">
+        var svg;
+        var projection;
+        var centered;
+        var path;
+        var g;
+        
+	    $(document).ready(function(){
+            
+            var width = 400,
+                height = 400,
+            
+            var arc = d3.svg.arc()
+                .startAngle(0)
+                .innerRadius(180)
+                .outerRadius(240);
+            
+            var svg = d3.select("body").append("svg")
+                .attr("width", width)
+                .attr("height", height)
+                .append("g")
+                .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+            
+            svg.append("path")
+                .attr("class", "background")
+                .attr("d", arc.endAngle(twoPi));
+            
+            
+        });
+        
+
+        function colorForItem(item){
+            var random = randomInt(0,100);
+            return d3.interpolateRgb("#F1EEF6", "#034E7B")(random/100);
+        }
+        
+        //Return a random number between min and max
+        function randomInt(min, max){
+            return Math.floor((Math.random()*max)+1)+min;
+        }
+        
+        function updateViz(){
+            feature = svg.selectAll("path")
+                .transition()
+                .attr('fill', function(d){
+                        return colorForItem(d);
+                    });
+        }
+        
+        window.onresize = function(event) {
+          svg.attr("width", window.innerWidth-45);
+          svg.attr("height", window.innerHeight-45);
+        }
+
+        
+	</script>
+    
+</html>
