@@ -54,7 +54,7 @@
               
              projection = d3.geo.mercator()
                                 .scale(12000)
-                                .translate([530, 1800]);
+                                .translate([-400, 1500]);
               
             path = d3.geo.path()
                 .projection(projection);
@@ -64,12 +64,23 @@
                 .attr("width",w)
                 .attr("height", h)
                 .attr("id", 'svg');
-            
+                
+            svg.append("rect")
+                .attr("class", "background")
+                .attr("width", w)
+                .attr("height", h)
+                .on("click", click);    
+                        
+            g = svg.append("g")
+                .attr("transform", "translate(" + w / 2 + "," + h / 2 + ")")
+                .append("g")
+                .attr("id", "states");
+    
             //d3.json("../data/geo/world-countries.wa.json", function(collection) {
             d3.json("../data/geo/regioni_semplici.json", function(collection) {
-                    feature = svg.selectAll("path")
+                    feature = g.selectAll("path")
                         .data(collection.features)
-                        .enter().append("svg:path")
+                        .enter().append("path")
                         .attr("d", path)
                         .attr('stroke', function(d) {
                              return "#AFAFAF"; //default color
@@ -107,6 +118,59 @@
                         return colorForItem(d);
                     });
         }
+        
+        function click(d) {
+          var x = 0,
+              y = 0,
+              k = 1;
+        
+          if (d && centered !== d) {
+            var centroid = path.centroid(d);
+            x = -centroid[0];
+            y = -centroid[1];
+            k = 4;
+            centered = d;
+          } else {
+            centered = null;
+          }
+        
+          g.selectAll("path")
+              .classed("active", centered && function(d) { return d === centered; });
+        
+          g.transition()
+              .duration(1000)
+              .attr("transform", "scale(" + k + ")translate(" + x + "," + y + ")")
+              .style("stroke-width", 1.5 / k + "px");
+        
+           g.selectAll("path")
+                .filter(function(c){
+                    return (c != d); //!c.active;
+                })
+                .transition()
+                .duration(500)
+                 .ease(Math.sqrt)
+                .style("opacity",".3");
+
+           g.selectAll("path")
+                .filter(function(c){
+                    return (c === d); //!c.active;
+                })
+                .transition()
+                .duration(500)
+                 .ease(Math.sqrt)
+                .style("opacity","1");
+
+            if (!centered){
+               g.selectAll("path")
+                    .transition()
+                    .duration(500)
+                     .ease(Math.sqrt)
+                    .style("opacity","1");
+            }
+            
+            console.log("clicked!");
+        }
+
         
         window.onresize = function(event) {
           svg.attr("width", window.innerWidth-45);
