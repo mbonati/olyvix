@@ -14,7 +14,7 @@ var w = VIZ_WIDTH, /*innerWidth,*/
     z = d3.scale.category20c(),
     i = 0;
 
-var svg, lines;
+var svg, lines, timelineSelectorSvg;
 var tooltip;
 var vizCreated = false;
 
@@ -113,7 +113,6 @@ var countriesDataSource = new Miso.Dataset({
         { name : "full_name", type: "string" },
     ]
 });
-
 
 svg = d3.select("#rayViz").append("svg:svg")
       .attr("width", w)
@@ -617,6 +616,7 @@ function loadCrossFilter(){
       var medalsExByEditionYearGroup = medalsByEditionYear.group().reduce(
           //Add function
           function(p, v) {
+              p.gamesId = v.gamesId;
               p.totalMedals += parseInt(v.total);
               p.totalGold += parseInt(v.gold);
               p.totalSilver += parseInt(v.silver);
@@ -644,53 +644,139 @@ function loadCrossFilter(){
                   totalBronze:0,
                   participants:0,
                   year: 0,
-                  hostCity: ""
+                  hostCity: "",
+                  gamesId: 0
               };
           }
       );
-
-
-      var editionsBarChart = dc.barChart("#editions-bar-chart");
-      
-      editionsBarChart.width(820)
-                  .height(160)
-                  .margins({top: 10, right: 50, bottom: 30, left: 40})
-                  .dimension(medalsByEditionYear)
-                  .group(medalsExByEditionYearGroup)
-                  .elasticY(true)
-                  .centerBar(true)
-                  .gap(-10)
-                  .renderTitle(true)
-                  .x(d3.scale.linear().domain([1880, 2015]))
-                  .filter([2011, 2013])
-                  .renderHorizontalGridLines(true)
-                  .brushOn(true)
-
-                  .valueAccessor(function(d) {
-                    return d.value.totalMedals;
-                  })
-                  
-                  .stack(medalsExByEditionYearGroup, function(d){
-                    return d.value.totalGold;
-                  })
-                  .stack(medalsExByEditionYearGroup, function(d){
-                    return d.value.totalSilver;
-                  })
-                  .stack(medalsExByEditionYearGroup, function(d){
-                    return d.value.totalBronze;
-                  })
-                  
-                  .title(function(d){
-                    var ret = "Edition: " + (d.value.hostCity) + " " + (d.value.year)
-                            + "\nParticipants: " + (d.value.participants);
-                    return ret;
-                  })
-
-                  .xAxis();
   
-      dc.renderAll();
+      
+      var width = jQuery("#timeline-selector-viz").width();
+      var height = jQuery("#timeline-selector-viz").height();
+      // svg.attr("width", w);
+      // svg.attr("height", h);
+      // lines.attr("transform", "translate(" + w/2 + "," +  h/2 +" )");
+
+      var margin = {top: 10, right: 10, bottom: 10, left: 10};
+      var axis = d3.svg.axis().orient("bottom");
+      var brush = d3.svg.brush();
+
+      timelineSelectorSvg = d3.select("#timeline-selector-viz").append("svg:svg")
+            .attr("width", width)
+            .attr("height", height)
+            .attr("id", 'svg-timeline-selector-viz');
+
+      g = timelineSelectorSvg.append("g");
+            //.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+       
+       /*     
+      g.append("rect")
+          .attr("width", width - (margin.left+margin.right))
+          .attr("height", height - (margin.bottom+margin.top))
+*/  
+        g.selectAll(".bar")
+          .data(medalsExByEditionYearGroup.all(), function(d){
+            return d;
+          }).enter()
+            .append("svg:line")
+            .attr("class", "gameEdition")
+            .attr('id', function(d) {
+              return d.value.gamesId;
+            })
+            .attr('x1', function(d) {
+              v = (d.value.gamesId * 30) ;
+              return v;
+            })
+            .attr('y1', function(d) {
+                return 10;
+            })
+            .attr('x2', function(d) {
+              v = (d.value.gamesId * 30) ;
+              return v;
+            })
+            .attr('y2', function(d) {
+                return 100;
+            })
+            .attr('stroke', function(d) {
+                return "#FF0000"; //default color
+            })
+            .attr('stroke-width', 9)
+            .on("mouseover", function(t, e) {
+              d3.selectAll(".gameEdition")
+                 .filter(function(d) {
+                   return d.value.gamesId != t.value.gamesId;
+                 })
+                 .transition()
+                 .duration(30)
+                 .style("opacity", 0.5);
+            })
+            .on("mouseout", function(t) {
+                d3.selectAll(".gameEdition")
+                   .filter(function(d) {
+                     return d.value.gamesId != t.value.gamesId;
+                   })
+                   .transition()
+                   .duration(30)
+                   .style("opacity", 1);
+            });
+
+      // var editionsBarChart = dc.barChart("#editions-bar-chart");
+      
+      // editionsBarChart.width(820)
+      //             .height(160)
+      //             .margins({top: 10, right: 50, bottom: 30, left: 40})
+      //             .dimension(medalsByEditionYear)
+      //             .group(medalsExByEditionYearGroup)
+      //             .elasticY(true)
+      //             .centerBar(true)
+      //             .gap(-10)
+      //             .renderTitle(true)
+      //             .x(d3.scale.linear().domain([1880, 2015]))
+      //             .filter([2011, 2013])
+      //             .renderHorizontalGridLines(true)
+      //             .brushOn(true)
+
+      //             .valueAccessor(function(d) {
+      //               return d.value.totalMedals;
+      //             })
+                  
+                  
+      //             .stack(medalsExByEditionYearGroup, function(d){
+      //               return d.value.totalGold;
+      //             })
+      //             .stack(medalsExByEditionYearGroup, function(d){
+      //               return d.value.totalSilver;
+      //             })
+      //             .stack(medalsExByEditionYearGroup, function(d){
+      //               return d.value.totalBronze;
+      //             })
+                  
+      //             .title(function(d){
+      //               var ret = "Edition: " + (d.value.hostCity) + " " + (d.value.year)
+      //                       + "\nParticipants: " + (d.value.participants);
+      //               return ret;
+      //             })
+
+      //             .xAxis();
+  
+      // dc.renderAll();
+      
 
   });
+
+  function fade(opacity, ttt, t) {
+     A = lines.selectAll("line.country")
+         .filter(function(d) {
+           return d.countryCode != t.countryCode;
+         })
+         .transition()
+     if(returning_back) {
+       A = A.delay(1000)
+     }
+     A.transition()
+       .duration(ttt)
+       .style("opacity", opacity);
+  }
 
 
 }
