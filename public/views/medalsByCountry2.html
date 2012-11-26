@@ -1,0 +1,106 @@
+<html>
+<head>
+	<title>OlyViz Medals By Country (2nd version)</title>
+	
+	<!-- JQuery -->
+    <script src="http://code.jquery.com/jquery-1.8.2.js"></script>
+    <script src="http://code.jquery.com/ui/1.9.1/jquery-ui.js"></script>
+    <link href="http://code.jquery.com/ui/1.9.1/themes/base/jquery-ui.css" type="text/css" rel="stylesheet">
+
+    <!-- Bootstrap -->
+    <link href="../css/bootstrap/bootstrap.min.css" type="text/css" rel="stylesheet">
+    <link href="../css/bootstrap/bootstrap-responsive.css" type="text/css" rel="stylesheet">
+    <script src="../js/bootstrap/bootstrap.min.js"></script> 
+
+    <!-- D3.js -->
+    <script src="http://d3js.org/d3.v2.js"></script>
+
+    <!-- Crossfilter -->
+    <script src="../js/crossfilter/crossfilter.min.js"></script> 
+
+    <!-- dc.js -->
+    <script type="text/javascript" src="../js/dc.js/dc.min.js"></script>
+    <link rel="stylesheet" href="../js/dc.js/dc.css" type="text/css" media="screen">
+
+    <!--
+	<link href="../css/reset.css" rel="stylesheet" type="text/css" />
+	<link href="../css/style.css" rel="stylesheet" type="text/css" />
+	<link href="../css/fonts.css" rel="stylesheet" type="text/css" />
+	-->
+	<link href="../css/fonts.css" rel="stylesheet" type="text/css" />
+	<link href="../css/medalsByCountry2.css" rel="stylesheet" type="text/css" />
+	
+	<script type="text/javascript" src="../js/miso.ds.deps.min.0.2.1.js"></script>
+	<script type="text/javascript" src="../js/underscore-min.1.4.1.js"></script>
+	<script type="text/javascript" src="../js/dat.gui/dat.gui.min.js"></script>
+
+	<!-- Fonts -->
+	<!--
+	<link href='http://fonts.googleapis.com/css?family=Titillium+Web' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Titillium+Web:700' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Carrois+Gothic' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Raleway+Dots' rel='stylesheet' type='text/css'>
+	-->
+    <!--<script type="text/javascript" src="/js/jquery-1.7.1.min.js" ></script>-->
+
+</head>
+<body>
+
+<!--
+<div id="titleContainer">
+	<h1>Medals By Country (2nd version)</h1>
+	<h2>Explore Olympic Games medals ranking by editions. <br/><br/>Click on the bars to explore deeper</h2>
+</div>
+-->
+
+<div class="row">
+  <div class="span8" style="background: transparent;height:50%;">
+
+  	<div id="rayViz" style="background: transparent;width:100%;height:100%;min-height:400px;">
+  	</div>
+	<div id="innerCircle">
+		<p id="big_year"></p>
+		<p id="hostCity"></p>
+	</div>
+	<div id="prevBtn"><a href="#" id="prevBtn_a">1999</a></div>
+	<div id="nextBtn"><a href="#" id="nextBtn_a">2001</a></div>
+
+  </div>
+  <div class="span4">
+  </div>
+</div>
+
+<div class="row">
+	<div class="span12">
+		<div id="editions-bar-chart" class="chart" style="padding: 4px; width 100%;">
+	    	<span><h4>Select one or more Edition</h4></span>
+	    	<!--
+	        <a class="reset" href="javascript:periodiChart.filterAll();dc.redrawAll();" style="display: none;">rimuovi filtro</a>
+	    	-->
+	        <div class="clear"></div>
+	    </div>
+	</div>
+</div>
+
+
+</body>
+
+
+<div id="tooltip">
+</div>
+
+
+
+
+<!-- App -->
+<script src="../js/medalsByCountry2.js"></script>
+
+
+    <script type="text/javascript">
+	    $(document).ready(function(){
+	        // entry point
+            startViz();
+        });
+	</script>
+    
+</html>
